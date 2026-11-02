@@ -1,0 +1,26 @@
+name: GCU Sports & Recruits Scraper
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # Runs daily
+  workflow_dispatch:
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+    - name: Run Script
+      run: python main.py
+    - name: Commit Report
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        git add sports_report.txt || true
+        git commit -m "Updated sports recruitment metrics" || true
+        git push || true
